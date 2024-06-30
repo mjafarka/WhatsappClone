@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import './style.scss'
 import logo from '../resources/app_logo.png'
 import { signIn, signUp } from '../firebase/fireBaseApi';
+import { useUserDispatcher } from '../context/UserContext';
 
 function AuthPage() {
     const [newUserLogin, setNewUserLogin] = useState(false);
@@ -10,15 +11,23 @@ function AuthPage() {
     const [email, setEmail] = useState('');
     const [password,setPassword] = useState('');
 
+    const logUser = useUserDispatcher();
     const signUser = async () => {
-        signUp({
-            userId: 1,
-            username: name,
-            emailid: email,
-            password: password,
-            profileloc: '/user/drive'
-        })
-        console.log("email", email);
+        let user;
+
+        // signup and sign in need to return user object with name, id, profLoc, email_id
+        if (newUserLogin) {
+            user = await signUp({
+                userName: name,
+                emailId: email,
+                password: password,
+                profileLoc: '/user/drive'
+            });
+        } else {
+            user = await signIn(email, password);
+            console.log("user ", user);
+        }
+        logUser({type: 'getIn', ...user})
     }
 
     return (
