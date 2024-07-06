@@ -1,0 +1,27 @@
+.searchContainer {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+
+    .input-search {
+        width: 100%;
+        padding: 10px 40px 10px 10px;
+        box-sizing: border-box;
+        border-radius: 7px;
+        outline: none;
+    }
+
+
+    .search-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+    }
+
+    .search-icon > svg {
+        width: 20px;
+        height: 20px;
+    }
+}

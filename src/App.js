@@ -2,17 +2,19 @@ import logo from './logo.svg';
 import './App.css';
 import AuthPage from './authentication/authPage';
 import { getUser, useUser } from './context/UserContext';
+import SideBar from './mainComponents/sidebar/main';
+import { addToLocalPersons, searchByNameLocal } from './localDB/localDB';
+import Home from './mainComponents';
 // import './tailwind.css'
 
 
 function App() {
 
   const user = useUser();
-
-  
   return (
     <>
-      {user.userId != null ?  <h1>Welcome {user.name}</h1> : <AuthPage/> }
+    <Home/>
+      {/* {user.userId != null ?  <Home/> : <AuthPage/> } */}
     </>
   );
 }

@@ -9,7 +9,6 @@ export function UserProvider({ children }) {
         userOperationReducer,
         initialUser
     );
-    console.log("userprovider ", user)
     return (
         <UserContext.Provider value={user}>
             <UserDispatchContext.Provider value={dispatch}>
@@ -30,7 +29,6 @@ export function useUserDispatcher() {
 function userOperationReducer(user, action) {
     switch (action.type) {
         case 'getIn': {
-            console.log("action : ",action)
             return {
                 userId: action.userId,
                 name: action.userName,

@@ -1,7 +1,7 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth"
 import { auth, db } from "./firebase"
 import { addDoc, collection } from "firebase/firestore";
-import { createUserDoc, getUserDoc } from "./firebaseDB";
+import { createUserDoc, getUserDoc, searchUserSubStringDB } from "./firebaseDB";
 
 //new user
 export const signUp = async (userData) => {
@@ -42,16 +42,6 @@ export const signIn = async (email, password) => {
     } catch (err) {
         throw new Error("error in sign in , ", err);
     }
-    // signInWithEmailAndPassword(auth, email, password)
-    //     .then((userCredential) => {
-    //         const user = userCredential.user;
-    //         console.log(user);
-    //     })
-    //     .catch(error => {
-    //         const errCode = error.code;
-    //         const errMessage = error.message;
-    //         console.log(errCode,errMessage);
-    //     })
 }
 
 export const signOutUser = () => {
@@ -75,5 +65,16 @@ export const addUserData = async (userData) => {
         console.log("New user added with id: ", docRef.id);
     } catch (error) {
         console.log("Error adding new user ", error)
+    }
+}
+
+//should return user object to search functionality online search
+export const searchUserSubString = async (subName) => {
+    try {
+        const similarNames = await searchUserSubStringDB(subName);
+        return similarNames;
+    } catch (err) {
+        console.log("error in searchUserSubString", err.message);
+        throw new Error("error in searching sub string", err);
     }
 }
