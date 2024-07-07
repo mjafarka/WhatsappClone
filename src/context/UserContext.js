@@ -26,6 +26,7 @@ export function useUserDispatcher() {
     return useContext(UserDispatchContext);
 }
 
+//user: already present user
 function userOperationReducer(user, action) {
     switch (action.type) {
         case 'getIn': {
