@@ -1,0 +1,23 @@
+.searchResult {
+    background-color: antiquewhite;
+    overflow-y: scroll;
+    max-height: 250px;
+}
+
+.searchResultNoScroll {
+    background-color: antiquewhite;
+    // overflow-y: scroll;
+    max-height: 250px;
+}
+
+
+
+.searchMore {
+    text-align: center;
+    color:rgb(88, 165, 234);
+    cursor: pointer;
+}
+
+.backButton {
+    justify-content: center;
+}
