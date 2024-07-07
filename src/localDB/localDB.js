@@ -8,6 +8,10 @@ class PersonQueue {
     }
 
     enqueue(person) {
+        let index = this.isAlreadyPresent(person.userId); // index = queuindex if present. else null
+        if (index != null) {
+            delete this.persons[index];
+        }
         this.persons[this.backIndex] = person;
         this.backIndex ++
         while (Object.keys(this.persons).length > 20) {
@@ -21,6 +25,16 @@ class PersonQueue {
         this.frontIndex ++
         return person
     }
+
+    //return queuId in persons if present else null
+    isAlreadyPresent(userId){
+        for (const key of Object.keys(this.persons)) {
+            if (userId === this.persons[key].userId){
+                return key;
+            }
+        }
+        return null;
+    }
 }
 
 //we use as local storage
@@ -28,16 +42,20 @@ const localPerson = new PersonQueue();
 
 export const searchByNameLocal = (substring) => {
     const similarName = []
-
     //key:  will be number from the class PersonQueue
     for (const key of  Object.keys(localPerson.persons)) {
-        if (localPerson.persons[key].name.includes(substring)) {
-            similarName.push({...localPerson.persons[key], queueId: key})
+        if (localPerson.persons[key].userName.includes(substring)) {
+            similarName.push(localPerson.persons[key])  //queuid will be present
         }
     }
     return similarName;
 }
 
+
 export const addToLocalPersons = (person) => {
     localPerson.enqueue(person);
 }
+
+addToLocalPersons({userName: 'muhammed', emaidId: "muhammed@gmail.com", profileLoc: 'jdksjkfsl', userId: '89faueio'});
+addToLocalPersons({userName: 'muhammed', emaidId: "muhammed@gmail.com", profileLoc: 'jdksjkfsl', userId: '89faueio'});
+console.log("queue : ", localPerson.persons);
