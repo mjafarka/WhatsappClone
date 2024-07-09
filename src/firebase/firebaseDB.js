@@ -44,16 +44,14 @@ const searchUserSubStringDB = async (userSubName) => {
         const q = query(userIdSearchTerms, where('terms', 'array-contains', userSubName));
         const userIdsSnap = await getDocs(q);
         const usersMatched = []
-        userIdsSnap.forEach( async (doc) => {
+        for (const doc of userIdsSnap.docs) {
             const user = await getUserDoc(doc.id);
             usersMatched.push({...user, userId: doc.id});
-        })
+        }
         return usersMatched;            
     } catch (err) {
         throw new Error("fireBaseDB", err)
     }
 }
-
-console.log(await searchUserSubStringDB('rah')); 
 
 export {createUserDoc, getUserDoc, searchUserSubStringDB};

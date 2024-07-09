@@ -1,4 +1,4 @@
-import {  createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useReducer, useState } from "react";
 import { searchByNameLocal } from "../localDB/localDB";
 import { searchUserSubString } from "../firebase/fireBaseApi";
 
@@ -7,16 +7,22 @@ const SearchResultContext = createContext(null);
 
 const SearchMethodDispachContext = createContext(null);
 
-export function SearchProvider({children}) {
+export const subNameContext = createContext("");
+
+export function SearchProvider({ children }) {
     const [searchResult, dispatch] = useReducer(
         searchMethodReducer, initialResult);
 
+    const [subName, setSubNameInContext] = useState("");
+
     return (
-        <SearchResultContext.Provider value={searchResult}>
-            <SearchMethodDispachContext.Provider value={dispatch}>
-                {children}
-            </SearchMethodDispachContext.Provider>
-        </SearchResultContext.Provider>
+        <subNameContext.Provider value={{subName, setSubNameInContext}} >
+            <SearchResultContext.Provider value={searchResult}>
+                <SearchMethodDispachContext.Provider value={dispatch}>
+                    {children}
+                </SearchMethodDispachContext.Provider>
+            </SearchResultContext.Provider>
+        </subNameContext.Provider>
     )
 }
 
@@ -29,17 +35,19 @@ export function useSearchMethodDispatcherContext() {
 }
 
 // searcheResult : already searched result
-function searchMethodReducer(searchResult,action) { //action: {type: "recent", subName: "muh"}
+async function searchMethodReducer(searchResult, action) { //action: {type: "recent", subName: "muh"}
     switch (action.type) {
         case "recent": {
-            const profiles =  searchByNameLocal(action.subName)
+            const profiles = searchByNameLocal(action.subName)
             return profiles;
         }
         case "new": {
             //db search
-            const profiles = searchUserSubString(action.subName);
+            console.log("come in the reducer function", action.subName)
+            const profiles = await searchUserSubString(action.subName);
+            console.log("profiles returned", profiles);
             return profiles
-        } 
+        }
         default: {
             throw new Error("search method reducer , Unknown Actoin: ", action.type);
         }

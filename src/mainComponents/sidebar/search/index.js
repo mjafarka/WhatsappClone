@@ -1,15 +1,17 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import './index.scss'
 import { CiSearch } from "react-icons/ci";
-import { useSearchMethodDispatcherContext, useSearchResult } from '../../../context/SearchContext';
+import { subNameContext, useSearchMethodDispatcherContext, useSearchResult } from '../../../context/SearchContext';
 
 function Search() {
 
   const searchTrigger = useSearchMethodDispatcherContext();
   const [subName, setSubName] = useState("");
+  const {setSubNameInContext} = useContext(subNameContext);
 
   function searchPeople () {
       searchTrigger({type: 'recent', subName: subName});
+      setSubNameInContext(subName);
   }
 
   return (
