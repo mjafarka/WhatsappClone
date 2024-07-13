@@ -62,8 +62,5 @@ const addToLocalPersons = (person) => {
     localPerson.enqueue(person);
 }
 
-addToLocalPersons({userName: 'rahul', emaidId: "rahul@gmail.com", profileLoc: 'jdksjkfsl', userId: '89faudeio'});
-addToLocalPersons({userName: 'muhammed', emaidId: "muhammed@gmail.com", profileLoc: 'jdksjkfsl', userId: '89faueio'});
-console.log("queue : ", localPerson.persons);
 
 export {localPerson, searchByNameLocal,addToLocalPersons}

@@ -5,12 +5,14 @@ import UserProfile from '../userProfile';
 import SearchResult from '../searchResults';
 import { SearchProvider, defaultContext } from '../../../context/SearchContext';
 import { localPerson } from '../../../localDB/localDB';
+import {useSelector, useDispatch} from 'react-redux'
 
 function SideBar() {
 
 
   const [profiles, setProfiles] = useState([]);
-  const [addButtonRefresh, setAddButtonRefresh] = useState(false);
+  const refresh = useSelector(state => state.search.refreshBool)
+
 
   useEffect(() => {
     function addAllProfiles() { // used to add profiles from queue
@@ -29,7 +31,7 @@ function SideBar() {
       setProfiles(profilesToAdd);
     }
     addAllProfiles();
-  }, [addButtonRefresh])
+  }, [refresh])
 
   return (
     <div className='sideBar'>

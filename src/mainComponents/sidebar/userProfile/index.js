@@ -2,13 +2,17 @@ import React from 'react'
 import './index.scss'
 import profilePic from '../../../resources/joseph.webp';
 import { addToLocalPersons } from '../../../localDB/localDB';
+import {useSelector, useDispatch} from 'react-redux'
+import { toggleRefresh } from '../../../redux/sideBar/searchSlice';
 
 function UserProfile(props) {
   const { user, showAdd} = props;
   user.profileLoc = profilePic;
+  const dispatch = useDispatch();
 
   const addUserToChatt = () => {
     addToLocalPersons(user);
+    dispatch(toggleRefresh())
   }
   return (
     <div className='userProfile'>
