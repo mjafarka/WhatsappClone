@@ -9,13 +9,18 @@ const SearchMethodDispachContext = createContext(null);
 
 export const subNameContext = createContext("");
 
+export const defaultContext = createContext(false);
+
 export function SearchProvider({ children }) {
     const [searchResult, dispatch] = useReducer(
         searchMethodReducer, initialResult);
 
     const [subName, setSubNameInContext] = useState("");
 
+    const [showSearchResult, setShowSearchResult] = useState(false);
+
     return (
+        <defaultContext.Provider value={{showSearchResult, setShowSearchResult}}>
         <subNameContext.Provider value={{subName, setSubNameInContext}} >
             <SearchResultContext.Provider value={searchResult}>
                 <SearchMethodDispachContext.Provider value={dispatch}>
@@ -23,6 +28,7 @@ export function SearchProvider({ children }) {
                 </SearchMethodDispachContext.Provider>
             </SearchResultContext.Provider>
         </subNameContext.Provider>
+        </defaultContext.Provider>
     )
 }
 

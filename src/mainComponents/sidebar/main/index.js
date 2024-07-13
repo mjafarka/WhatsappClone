@@ -1,31 +1,43 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './index.scss'
 import Search from '../search';
 import UserProfile from '../userProfile';
 import SearchResult from '../searchResults';
-import { SearchProvider } from '../../../context/SearchContext';
+import { SearchProvider, defaultContext } from '../../../context/SearchContext';
+import { localPerson } from '../../../localDB/localDB';
 
 function SideBar() {
 
-  const profiles = []
-  for (let i = 0 ; i < 10 ; i ++ ){
-    profiles.push(<UserProfile user={{emaidId: "muhammed@gmail.com",profileLoc
-      : 
-      "jdksjkfsl",
-      userId
-      : 
-      "89faueio",
-      userName
-      : 
-      "muhammed"}} key={i}/>)
-  }
+
+  const [profiles, setProfiles] = useState([]);
+  const [addButtonRefresh, setAddButtonRefresh] = useState(false);
+
+  useEffect(() => {
+    function addAllProfiles() { // used to add profiles from queue
+      const a = localPerson.persons;
+      const backIndex = localPerson.backIndex;
+      const frontIndex = localPerson.frontIndex;
+      const profilesToAdd = []
+      for (let i = backIndex; i >= frontIndex; i--) {
+        if (a[i] == null) continue;
+        const ithPerson = a[i];
+        profilesToAdd.push(<UserProfile user={{
+          userName: ithPerson.userName,
+          emailId: ithPerson.emailId, profileLoc: ithPerson.profileLoc, userId: ithPerson.userId
+        }}/>);
+      }
+      setProfiles(profilesToAdd);
+    }
+    addAllProfiles();
+  }, [addButtonRefresh])
+
   return (
     <div className='sideBar'>
-          <SearchProvider> {/* to search local and db profiles */}
-              <Search/>
-              <SearchResult/>
-          </SearchProvider>
-            {profiles}
+      <SearchProvider> {/* to search local and db profiles */}
+        <Search />
+        <SearchResult />
+      </SearchProvider>
+      {profiles}
     </div>
   )
 }

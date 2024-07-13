@@ -1,24 +1,31 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './index.scss'
 import { CiSearch } from "react-icons/ci";
-import { subNameContext, useSearchMethodDispatcherContext, useSearchResult } from '../../../context/SearchContext';
+import { defaultContext, subNameContext, useSearchMethodDispatcherContext, useSearchResult } from '../../../context/SearchContext';
 
 function Search() {
 
+  const {subName} = useContext(subNameContext);
   const searchTrigger = useSearchMethodDispatcherContext();
-  const [subName, setSubName] = useState("");
+  const [subNameSearch, setSubNameSearch] = useState(subName);
   const {setSubNameInContext} = useContext(subNameContext);
+  const {setShowSearchResult} = useContext(defaultContext);
+
+  useEffect(() => {
+    setSubNameSearch(subName);
+  },[subName])
 
   function searchPeople () {
-      searchTrigger({type: 'recent', subName: subName});
-      setSubNameInContext(subName);
+      searchTrigger({type: 'recent', subName: subNameSearch});
+      setSubNameInContext(subNameSearch);
+      setShowSearchResult(true);
   }
 
   return (
     <>
       <div className='searchContainer'>
-        <input type='text' placeholder='Search...' className='input-search' 
-        onChange={e => setSubName(e.target.value)}/>
+        <input type='text' placeholder='Search...' className='input-search' value={subNameSearch}
+        onChange={e => setSubNameSearch(e.target.value)}/>
         <span className='search-icon'>
           <CiSearch onClick={() => searchPeople()}/>
         </span>

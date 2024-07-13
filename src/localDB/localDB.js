@@ -1,3 +1,5 @@
+import { setUpdate, update } from "../mainComponents/sidebar/main";
+
 class PersonQueue {
     //automatically remove last element if the queue size 
     // is more than 20
@@ -14,7 +16,7 @@ class PersonQueue {
         }
         this.persons[this.backIndex] = person;
         this.backIndex ++
-        while (Object.keys(this.persons).length > 20) {
+        while (Object.keys(this.persons).length > 100) { //adjust local storage 
             this.dequeue()
         }
     }
@@ -35,27 +37,33 @@ class PersonQueue {
         }
         return null;
     }
+
+
 }
 
 //we use as local storage
 const localPerson = new PersonQueue();
 
-export const searchByNameLocal = (substring) => {
+const searchByNameLocal = (substring) => {
     const similarName = []
     //key:  will be number from the class PersonQueue
-    for (const key of  Object.keys(localPerson.persons)) {
-        if (localPerson.persons[key].userName.includes(substring)) {
-            similarName.push(localPerson.persons[key])  //queuid will be present
+    if (substring !== '') {
+        for (const key of  Object.keys(localPerson.persons)) {
+            if (localPerson.persons[key].userName.includes(substring)) {
+                similarName.push(localPerson.persons[key])  //queuid will be present
+            }
         }
     }
     return similarName;
 }
 
 
-export const addToLocalPersons = (person) => {
+const addToLocalPersons = (person) => {
     localPerson.enqueue(person);
 }
 
-addToLocalPersons({userName: 'muhammed', emaidId: "muhammed@gmail.com", profileLoc: 'jdksjkfsl', userId: '89faueio'});
+addToLocalPersons({userName: 'rahul', emaidId: "rahul@gmail.com", profileLoc: 'jdksjkfsl', userId: '89faudeio'});
 addToLocalPersons({userName: 'muhammed', emaidId: "muhammed@gmail.com", profileLoc: 'jdksjkfsl', userId: '89faueio'});
 console.log("queue : ", localPerson.persons);
+
+export {localPerson, searchByNameLocal,addToLocalPersons}
