@@ -1,0 +1,26 @@
+.chatInput {
+    width: 70vw;
+    background-color: rgb(218, 31, 31);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    z-index: 0;
+    position: absolute;
+    bottom: 0;
+    height: 8vh;
+    
+    .textArea {
+        width: 100%;
+        flex-direction: column;
+        background-color: rgb(230, 221, 221);
+        margin-right: 13px;
+        border-radius: 30px;
+        padding: 10px;
+        padding-left: 20px;
+        margin-left: 10px;
+        outline: none;
+    }
+    .toSend {
+        font-size: 30px;
+    }
+}

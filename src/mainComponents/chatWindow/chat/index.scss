@@ -1,0 +1,21 @@
+.left {
+    background-color: rgb(249, 232, 209);
+    // width: fit-content;
+    padding: 3px 10px;
+    justify-self: right;
+    margin-right: 20px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+}
+
+.right {
+    background-color: rgb(249, 232, 209);
+    // width: fit-content;
+    padding: 3px 10px;
+    justify-self: left;
+    margin-left: 20px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
