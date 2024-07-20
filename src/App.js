@@ -5,13 +5,13 @@ import { getUser, useUser } from './context/UserContext';
 import SideBar from './mainComponents/sidebar/main';
 import { addToLocalPersons, searchByNameLocal } from './localDB/localDB';
 import Home from './mainComponents';
-import { sendMessage } from './firebase/firebaseDB';
+import { getAllMessages, sendMessage } from './firebase/firebaseDB';
 // import './tailwind.css'
 
 
 function App() {
-
-  sendMessage("usersId","userBId","abc","abc");
+  
+  getAllMessages('userAId', 'userBId');
 
   const user = useUser();
   return (
