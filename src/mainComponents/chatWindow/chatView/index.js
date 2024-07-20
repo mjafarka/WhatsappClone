@@ -7,17 +7,17 @@ function ChatView() {
 
   const chatViewRef = useRef();
 
-    useEffect(() => {
+  useEffect(() => {
         if (chatViewRef.current) {
             chatViewRef.current.scrollTop = chatViewRef.current.scrollHeight;
         }
-    }, []);
+  }, []);
 
-    useEffect(() => {
+  useEffect(() => {
         if (chatViewRef.current) {
             chatViewRef.current.scrollTop = chatViewRef.current.scrollHeight;
         }
-    });
+  });
   return (
     <div ref={chatViewRef} className='chatView'>
       <div className='chatContainer'>
