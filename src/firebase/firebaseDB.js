@@ -2,7 +2,6 @@
 
 import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, where } from "firebase/firestore";
 import { db } from "./firebase";
-import { useId } from "react";
 import { generateSearchableTerms } from "./helpers";
 
 const userCollection = collection(db,'user');
@@ -61,7 +60,7 @@ const searchUserSubStringDB = async (userSubName) => {
     }
 }
 
-export const sendMessage = async (userAId, userBId, message, time) => {
+export const sendMessage = async (userAId, userBId, message) => {
    //userA = sender, //userB = receiver
     try {
         let conversationId = await getConversationId(userAId, userBId);
@@ -84,21 +83,19 @@ export const sendMessage = async (userAId, userBId, message, time) => {
                       {userAid, userBId, message, timestamp}*/
 }
 
-export const getConversationId = async (userAId, userBId) => {
+export const getConversationId = async (from, to) => {
     try {
-        const q = query(conversationIdTerms, where('terms','array-contains', userAId));
+        const q = query(conversationIdTerms, where('terms','array-contains', from));
         const conversationIdRef = await getDocs(q);
         let conversationId = -1;
         conversationIdRef.docs.forEach((doc) => {
-            if (doc.data().terms[0] == userBId || doc.data().terms[1] == userBId){
+            if (doc.data().terms[0] === to || doc.data().terms[1] === to){
                 conversationId = doc.id;
             }
         })
         if (conversationId === -1) {
-            conversationId = await addDoc(collection(db, "conversationIdTerms"), {
-                userAId: userAId,
-                userBId: userBId
-            }); 
+            const documentId = await addDoc(collection(db, "conversationIdTerms"), {terms: [from,to]}); 
+            conversationId = documentId.id;
         }
         return conversationId;
     } catch (err) {
@@ -113,13 +110,14 @@ export const getAllMessages = async (userAId, userBId,) => {
 
         const conversationRef = doc(db, 'messageRoom', conversationId);
         const messageRef = collection(conversationRef, 'messages');
-        const q = query(messageRef, orderBy('time'));
+        const q = query(messageRef, orderBy('time','desc'));
 
         const querySnapshot = await getDocs(q);
-
+        const messages = [];
         querySnapshot.forEach((doc) => {
-            console.log(doc.id, ' -> ', doc.data());
+            messages.push(doc.data());
         });
+        return messages;
     } catch (err) {
         throw new Error("error in getting all message ", err);
     }

@@ -12,7 +12,7 @@ function UserProfile(props) {
   const dispatch = useDispatch();
   const userId = useSelector(state => state.userSelect.userId);
 
-  const addUserToChatt = () => {
+  const addUserToChat = () => {
     addToLocalPersons(user);
     dispatch(toggleRefresh())
   }
@@ -20,12 +20,12 @@ function UserProfile(props) {
   const startChattingWithPerson = () => {
     dispatch(selectProfile({userId: user.userId}));
   }
-  console.log("userId",userId);
+
   return (
-    <div className='userProfile' onClick={() => startChattingWithPerson()}>
+    <div className='userProfile' onClick={!showAdd ? startChattingWithPerson : undefined}>
       <img src={user.profileLoc} alt='user_photo' className='profilePic' />
       <h3 className='personName'>{user.userName}</h3>
-      {showAdd ? <button className='addButton' onClick={() => addUserToChatt()}>add</button> : ""}
+      {showAdd ? <button className='addButton' onClick={() => addUserToChat()}>add</button> : ""}
     </div>
   )
 }

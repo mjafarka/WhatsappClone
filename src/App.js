@@ -1,23 +1,24 @@
-import logo from './logo.svg';
 import './App.css';
 import AuthPage from './authentication/authPage';
-import { getUser, useUser } from './context/UserContext';
-import SideBar from './mainComponents/sidebar/main';
-import { addToLocalPersons, searchByNameLocal } from './localDB/localDB';
+import { useUser } from './context/UserContext';
+import { sendMessage } from './firebase/firebaseDB';
 import Home from './mainComponents';
-import { getAllMessages, sendMessage } from './firebase/firebaseDB';
-// import './tailwind.css'
+import { useSelector } from 'react-redux';
+
 
 
 function App() {
   
-  getAllMessages('userAId', 'userBId');
+  // getAllMessages('userAId', 'userBId');
 
+  // console.log("all messages", getAllMessages('userAId', 'userBId'));
   const user = useUser();
+
   return (
     <>
-    <Home/>
-      {/* {user.userId != null ?  <Home/> : <AuthPage/> } */}
+    {/* <Home/> */}
+      {user.userId != null ?  <Home/> : <AuthPage/> }
+      
     </>
   );
 }

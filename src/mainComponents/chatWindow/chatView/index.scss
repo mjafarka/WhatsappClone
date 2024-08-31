@@ -4,11 +4,16 @@
     height: 92vh;
     padding-top: 10px;
     overflow-y: auto;
+    display: grid;
 }
 
 .chatContainer {
     display: grid;
     align-content: end;
+    // display: flex;
+    // justify-content: flex-end;
+    // flex-direction: column;
     gap: 12px;
     padding-bottom: 15px;
+    border-bottom: 1px solid red;
 }
