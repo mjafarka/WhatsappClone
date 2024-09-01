@@ -4,6 +4,7 @@ import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimesta
 import { db } from "./firebase";
 import { generateSearchableTerms } from "./helpers";
 
+
 const userCollection = collection(db,'user');
 const userIdSearchTerms = collection(db,'userSearchTerms');
 const conversationIdTerms = collection(db,'conversationIdTerms');
@@ -21,6 +22,7 @@ const searchDocRef = (userId) => {
 const conversationDocRef = (conversationId) => {
     return doc(messageRoomCollection,conversationId);
 }
+
 // this will also create searchable terms {userId: ['ab','cd']}
 const createUserDoc = async (userId, userData) =>  {
     //add or create new user row
@@ -103,7 +105,10 @@ export const getConversationId = async (from, to) => {
     }
 }
 
-export const getAllMessages = async (userAId, userBId,) => {
+//a messageref will be created when a new user selected. 
+// can call the snapshot with 'messageref'
+
+export const getAllMessages = async (userAId, userBId) => {
     //userA = sender, //userB = receiver
     try {
         const conversationId = await getConversationId(userAId,userBId);

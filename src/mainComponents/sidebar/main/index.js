@@ -23,7 +23,7 @@ function SideBar() {
       for (let i = backIndex; i >= frontIndex; i--) {
         if (a[i] == null) continue;
         const ithPerson = a[i];
-        profilesToAdd.push(<UserProfile user={{
+        profilesToAdd.push(<UserProfile key={ithPerson.userId} user={{
           userName: ithPerson.userName,
           emailId: ithPerson.emailId, profileLoc: ithPerson.profileLoc, userId: ithPerson.userId
         }}/>);
