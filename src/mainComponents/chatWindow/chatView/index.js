@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './index.scss'
 import Chat from '../chat'
-import { getAllMessages } from '../../../firebase/firebaseDB';
+import { getAllMessages, getMessgeRef } from '../../../firebase/firebaseDB';
 import { useUser } from '../../../context/UserContext';
 import { useSelector,useDispatch } from 'react-redux';
-import {insertMessageRedux} from '../../../redux/chatWindow/messageSlice';
+import {insertMessageRedux, updateMessageRef} from '../../../redux/chatWindow/messageSlice';
 
 
 //here we are viewing all the chat component
@@ -33,8 +33,10 @@ function ChatView() {
 
   useEffect(() => {
     async function getAllMyMessages (){
-      let retrievedMessages = await getAllMessages(selectedUser, user.userId);
+      const messageRef = await getMessgeRef(selectedUser,user.userId);
+      const retrievedMessages = await getAllMessages(messageRef);
       dispatch(insertMessageRedux({messages:retrievedMessages}))
+      dispatch(updateMessageRef({messageRef: messageRef}));
     }
     getAllMyMessages();
   },[selectedUser]);

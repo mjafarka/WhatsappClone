@@ -105,28 +105,52 @@ export const getConversationId = async (from, to) => {
     }
 }
 
-//a messageref will be created when a new user selected. 
-// can call the snapshot with 'messageref'
-
-export const getAllMessages = async (userAId, userBId) => {
-    //userA = sender, //userB = receiver
+export const getMessgeRef = async (userAId, userBId) => {
     try {
         const conversationId = await getConversationId(userAId,userBId);
 
         const conversationRef = doc(db, 'messageRoom', conversationId);
         const messageRef = collection(conversationRef, 'messages');
+
+        return messageRef;
+    } catch (err) {
+        throw new Error("Exception at getting message Ref", err.message)
+    }
+    
+
+}
+
+//a messageref will be created when a new user selected. 
+// can call the snapshot with 'messageref'
+
+export const getAllMessages = async (messageRef) => {
+    //userA = sender, //userB = receiver
+    try {
+        
         const q = query(messageRef, orderBy('time','desc'));
 
         const querySnapshot = await getDocs(q);
         const messages = [];
         querySnapshot.forEach((doc) => {
-            messages.push(doc.data());
+            const data = doc.data();
+            const time = convertFireBaseTimeToJsTime(data.time);
+            data.time = time.toISOString();
+            messages.push(data);
         });
         return messages;
     } catch (err) {
         throw new Error("error in getting all message ", err);
     }
     
+}
+
+const convertFireBaseTimeToJsTime = (data) => {
+    const seconds = data.seconds;
+    const nanoSec = data.nanoseconds;
+    const nanoToMilliSec = (nanoSec/Math.pow(10,6));
+    const secToMilliSec = seconds*1000;
+    const date = new Date(nanoToMilliSec+secToMilliSec);
+    return date;
 }
 
 export {createUserDoc, getUserDoc, searchUserSubStringDB};
