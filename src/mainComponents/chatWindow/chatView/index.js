@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './index.scss'
 import Chat from '../chat'
-import { getAllMessages, getMessgeRef } from '../../../firebase/firebaseDB';
+import { convertFireBaseTimeToJsTime, getAllMessages, getMessgeRef } from '../../../firebase/firebaseDB';
 import { useUser } from '../../../context/UserContext';
 import { useSelector,useDispatch } from 'react-redux';
-import {insertMessageRedux, updateMessageRef} from '../../../redux/chatWindow/messageSlice';
+import { onSnapshot } from 'firebase/firestore';
 
 
 //here we are viewing all the chat component
@@ -26,19 +26,36 @@ function ChatView() {
         }
   });
 
-  const allMessage = useSelector(state => state.messageSelect.messages); // can set message when user selected and onsnapshot
+  // const allMessage = useSelector(state => state.messageSelect.messages); // can set message when user selected and onsnapshot
+  const [allMessage,setAllMessage] = useState([]);
   const selectedUser = useSelector(state => state.userSelect.userId); //for chatting with a user
   const user = useUser(); //master user
   console.log("selected user", selectedUser, "master"+user);
 
   useEffect(() => {
+    setAllMessage([]); //when user changes
     async function getAllMyMessages (){
       const messageRef = await getMessgeRef(selectedUser,user.userId);
-      const retrievedMessages = await getAllMessages(messageRef);
-      dispatch(insertMessageRedux({messages:retrievedMessages}))
-      dispatch(updateMessageRef({messageRef: messageRef}));
+      // const retrievedMessages = await getAllMessages(messageRef);
+      // dispatch(insertMessageRedux({messages:retrievedMessages}))
+      // dispatch(updateMessageRef({messageRef: messageRef}));
+
+      // remove the methods above.
+      onSnapshot(messageRef, (snapshot) => {
+        const messageToSet = []
+        snapshot.forEach((doc) => {
+            messageToSet.push(doc.data());
+        })
+        messageToSet.sort((a,b) => {
+          return convertFireBaseTimeToJsTime(b.time) - convertFireBaseTimeToJsTime(a.time)
+        })
+        setAllMessage([...allMessage,...messageToSet])
+      })
+      
     }
     getAllMyMessages();
+
+
   },[selectedUser]);
 
   const [allChatComponent,setAllChatComponent] = useState([]);

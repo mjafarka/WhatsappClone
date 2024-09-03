@@ -13,21 +13,28 @@ function AuthPage() {
 
     const logUser = useUserDispatcher();
     const signUser = async () => {
-        let user;
 
-        // signup and sign in need to return user object with name, id, profLoc, email_id
-        if (newUserLogin) {
-            user = await signUp({
-                userName: name,
-                emailId: email,
-                password: password,
-                profileLoc: '/user/drive'
-            });
-        } else {
-            user = await signIn(email, password);
-            console.log("user ", user);
+        try {
+            let user;
+
+            // signup and sign in need to return user object with name, id, profLoc, email_id
+            if (newUserLogin) {
+                user = await signUp({
+                    userName: name,
+                    emailId: email,
+                    password: password,
+                    profileLoc: '/user/drive'
+                });
+            } else {
+                user = await signIn(email, password);
+                console.log("user ", user);
+            }
+
+            localStorage.setItem('user',JSON.stringify(user));
+            logUser({type: 'getIn', ...user})
+        } catch (err){
+            throw new Error("error while logging",err.messsage);
         }
-        logUser({type: 'getIn', ...user})
     }
 
     return (

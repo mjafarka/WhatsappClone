@@ -123,28 +123,29 @@ export const getMessgeRef = async (userAId, userBId) => {
 //a messageref will be created when a new user selected. 
 // can call the snapshot with 'messageref'
 
-export const getAllMessages = async (messageRef) => {
-    //userA = sender, //userB = receiver
-    try {
+// export const getAllMessages = async (messageRef) => {
+//     //userA = sender, //userB = receiver
+//     try {
         
-        const q = query(messageRef, orderBy('time','desc'));
+//         const q = query(messageRef, orderBy('time','desc'));
 
-        const querySnapshot = await getDocs(q);
-        const messages = [];
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const time = convertFireBaseTimeToJsTime(data.time);
-            data.time = time.toISOString();
-            messages.push(data);
-        });
-        return messages;
-    } catch (err) {
-        throw new Error("error in getting all message ", err);
-    }
+//         const querySnapshot = await getDocs(q);
+//         const messages = [];
+//         querySnapshot.forEach((doc) => {
+//             const data = doc.data();
+//             const time = convertFireBaseTimeToJsTime(data.time);
+//             data.time = time.toISOString();
+//             messages.push(data);
+//         });
+//         return messages;
+//     } catch (err) {
+//         throw new Error("error in getting all message ", err);
+//     }
     
-}
+// }
 
-const convertFireBaseTimeToJsTime = (data) => {
+export const convertFireBaseTimeToJsTime = (data) => {
+    if (data == null) return new Date(); // realtime don't providing me time. when I send message
     const seconds = data.seconds;
     const nanoSec = data.nanoseconds;
     const nanoToMilliSec = (nanoSec/Math.pow(10,6));
