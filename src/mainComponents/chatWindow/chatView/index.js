@@ -41,7 +41,7 @@ function ChatView() {
       // dispatch(updateMessageRef({messageRef: messageRef}));
 
       // remove the methods above.
-      onSnapshot(messageRef, (snapshot) => {
+      const unsubscribe = onSnapshot(messageRef, (snapshot) => {
         const messageToSet = []
         snapshot.forEach((doc) => {
             messageToSet.push(doc.data());
@@ -49,9 +49,10 @@ function ChatView() {
         messageToSet.sort((a,b) => {
           return convertFireBaseTimeToJsTime(b.time) - convertFireBaseTimeToJsTime(a.time)
         })
-        setAllMessage([...allMessage,...messageToSet])
+        setAllMessage([...messageToSet])
       })
       
+      return () => unsubscribe();
     }
     getAllMyMessages();
 
