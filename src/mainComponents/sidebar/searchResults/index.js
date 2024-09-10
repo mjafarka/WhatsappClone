@@ -5,6 +5,8 @@ import { defaultContext, subNameContext, useSearchMethodDispatcherContext, useSe
 import { getChatHistoryDoc } from '../../../firebase/firebaseDB';
 import { useUser } from '../../../context/UserContext';
 import { getRecentChatUsers } from '../../../firebase/helpers';
+import { toggleSearchMethod } from '../../../redux/sideBar/searchSlice';
+import { useDispatch } from 'react-redux';
 
 const SearchResult =  () => {
 
@@ -13,6 +15,7 @@ const SearchResult =  () => {
   const result = useSearchResult();
   const {showSearchResult, setShowSearchResult} = useContext(defaultContext);
   const searchTrigger = useSearchMethodDispatcherContext();
+  const dispatch = useDispatch();
 
   useEffect( () => {
     const fetchData = async () => {
@@ -32,6 +35,7 @@ const SearchResult =  () => {
 
   const user = useUser();
   const searchPeopleOnline = async () => {
+    dispatch(toggleSearchMethod({searchMethod: 'new'}));
     const recentHistoryRef = await getChatHistoryDoc(user.userId);
     // const recentChatUsers = await getRecentChatUsers(recentHistoryRef,subName);
     // setSearchResult(recentChatUsers);
@@ -43,6 +47,7 @@ const SearchResult =  () => {
     setSubNameInContext("");
     setSearchResult([]);
     setShowSearchResult(false);
+    dispatch(toggleSearchMethod({searchMethod: 'recent'}));
   }
 
   return (

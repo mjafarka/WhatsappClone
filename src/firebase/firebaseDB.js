@@ -1,6 +1,6 @@
 // all the db related functions
 
-import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
+import { addDoc, arrayUnion, collection, doc, FieldValue, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
 import { db } from "./firebase";
 import { generateSearchableTerms } from "./helpers";
 import firebase from "firebase/compat/app";
@@ -201,6 +201,27 @@ export const updateTimeStampOfSelectedUsr = async (currUserId, selectedUserId) =
 
     } catch (err) {
         throw new Error ("error in updating firestore time",err.message);
+    }
+}
+
+/**
+ * 
+ * @param {String} currUser 
+ * @param {object} selectedUser 
+ */
+export const addToRecentChat = async (currUserId, selectedUser) => {
+    try {
+        const conversationid = await getConversationId(currUserId,selectedUser.userId);
+        const userChatHistoryDoc = await getChatHistoryDoc(currUserId);
+
+        const userObjToAdd = {...selectedUser,
+            lastActivityTimestamp: Timestamp.fromDate(new Date()),
+            conversationid: conversationid
+        };
+        updateDoc(userChatHistoryDoc, {chatPartners: arrayUnion(userObjToAdd)});
+    } 
+    catch (err) {
+        throw new Error ("error in adding new user to chat",err.message);
     }
 }
 
