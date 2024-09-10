@@ -4,41 +4,24 @@ class PersonQueue {
     //automatically remove last element if the queue size 
     // is more than 20
     constructor() {
-        this.persons = {}
-        this.frontIndex = 0
-        this.backIndex = 0
+        this.persons = []
+        this.compare = (a,b) => a.timeStamp - b.timeStamp;
     }
-
+    
     enqueue(person) {
-        let index = this.isAlreadyPresent(person.userId); // index = queuindex if present. else null
-        if (index != null) {
-            delete this.persons[index];
-        }
-        this.persons[this.backIndex] = person;
-        this.backIndex ++
-        while (Object.keys(this.persons).length > 100) { //adjust local storage 
-            this.dequeue()
-        }
+        this.persons.unshift(person);
+        return this.persons;
     }
 
-    dequeue() {
-        const person = this.persons[this.frontIndex]
-        delete this.persons[this.frontIndex]
-        this.frontIndex ++
-        return person
+    moveToFront(person) {
+        const index = this.persons.findIndex(p => p.userId === person.userId);
+
+        const element = this.persons.splice(index,1)[0];
+
+        this.persons.unshift(element);
+
+        return this.persons;
     }
-
-    //return queuId in persons if present else null
-    isAlreadyPresent(userId){
-        for (const key of Object.keys(this.persons)) {
-            if (userId === this.persons[key].userId){
-                return key;
-            }
-        }
-        return null;
-    }
-
-
 }
 
 //we use as local storage
@@ -48,19 +31,24 @@ const searchByNameLocal = (substring) => {
     const similarName = []
     //key:  will be number from the class PersonQueue
     if (substring !== '') {
-        for (const key of  Object.keys(localPerson.persons)) {
-            if (localPerson.persons[key].userName.includes(substring)) {
-                similarName.push(localPerson.persons[key])  //queuid will be present
+        localPerson.persons.forEach(person => {
+            if (person.userName.includes(substring)) {
+                similarName.push(person);
             }
-        }
+        });
     }
     return similarName;
 }
 
-
+//return array of person
 const addToLocalPersons = (person) => {
-    localPerson.enqueue(person);
+    return localPerson.enqueue(person);
+}
+
+//return array of person
+const moveToFrontPos = (person) => {
+    return localPerson.moveToFront(person);
 }
 
 
-export {localPerson, searchByNameLocal,addToLocalPersons}
+export {localPerson, searchByNameLocal,addToLocalPersons, moveToFrontPos}

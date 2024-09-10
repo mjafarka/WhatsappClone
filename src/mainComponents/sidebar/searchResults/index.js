@@ -2,6 +2,9 @@ import React, { useContext, useEffect, useState } from 'react'
 import './index.scss'
 import UserProfile from '../userProfile'
 import { defaultContext, subNameContext, useSearchMethodDispatcherContext, useSearchResult } from '../../../context/SearchContext';
+import { getChatHistoryDoc } from '../../../firebase/firebaseDB';
+import { useUser } from '../../../context/UserContext';
+import { getRecentChatUsers } from '../../../firebase/helpers';
 
 const SearchResult =  () => {
 
@@ -9,6 +12,7 @@ const SearchResult =  () => {
   const [searchResult, setSearchResult] = useState([]);
   const result = useSearchResult();
   const {showSearchResult, setShowSearchResult} = useContext(defaultContext);
+  const searchTrigger = useSearchMethodDispatcherContext();
 
   useEffect( () => {
     const fetchData = async () => {
@@ -26,8 +30,13 @@ const SearchResult =  () => {
       searchResultArray.push(<UserProfile user={user} key={user.userId} showAdd={true}/>)
   }
 
-  const searchPeopleOnDB = () => {
-    dbSearchTrigger({type: 'new', subName: subName});
+  const user = useUser();
+  const searchPeopleOnline = async () => {
+    const recentHistoryRef = await getChatHistoryDoc(user.userId);
+    // const recentChatUsers = await getRecentChatUsers(recentHistoryRef,subName);
+    // setSearchResult(recentChatUsers);
+    searchTrigger({type: 'new', subName: subName, 
+                  recentHistoryDoc: recentHistoryRef, currUserId: user.userId})
   }
 
   const exitSearchAction = () => {
@@ -40,7 +49,7 @@ const SearchResult =  () => {
     <div style={{display: showSearchResult ? 'block' : 'none'}}>
     <div className={searchResultArray.length > 3 ? "searchResult" : "searchResultNoScroll"}>
         {searchResultArray}
-        <div className='searchMore' onClick={() => searchPeopleOnDB()}>
+        <div className='searchMore' onClick={() => searchPeopleOnline()}>
           New connections
         </div>
         <button onClick={() => exitSearchAction()}>back</button>

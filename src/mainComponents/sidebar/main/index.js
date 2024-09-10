@@ -6,32 +6,46 @@ import SearchResult from '../searchResults';
 import { SearchProvider, defaultContext } from '../../../context/SearchContext';
 import { localPerson } from '../../../localDB/localDB';
 import {useSelector, useDispatch} from 'react-redux'
+import { convertFireBaseTimeToJsTime, getChatHistoryDoc } from '../../../firebase/firebaseDB';
+import { useUser } from '../../../context/UserContext';
+import { onSnapshot } from 'firebase/firestore';
 
 function SideBar() {
 
 
   const [profiles, setProfiles] = useState([]);
   const refresh = useSelector(state => state.search.refreshBool)
-
+  const user = useUser();
 
   useEffect(() => {
-    function addAllProfiles() { // used to add profiles from queue
-      const a = localPerson.persons;
-      const backIndex = localPerson.backIndex;
-      const frontIndex = localPerson.frontIndex;
-      const profilesToAdd = []
-      for (let i = backIndex; i >= frontIndex; i--) {
-        if (a[i] == null) continue;
-        const ithPerson = a[i];
-        profilesToAdd.push(<UserProfile key={ithPerson.userId} user={{
-          userName: ithPerson.userName,
-          emailId: ithPerson.emailId, profileLoc: ithPerson.profileLoc, userId: ithPerson.userId
-        }}/>);
-      }
-      setProfiles(profilesToAdd);
+    const addProfilesFromFS = async () =>{
+      const chatHistoryDoc = await getChatHistoryDoc(user.userId);
+      const unsubscribe = onSnapshot(chatHistoryDoc, (doc) => {
+        const data = doc.data();
+
+        if (data && data.chatPartners) {
+
+          const arrOfPartners = data.chatPartners;
+
+          arrOfPartners.sort((a,b) => convertFireBaseTimeToJsTime(b.lastActivityTimestamp) 
+                                    - convertFireBaseTimeToJsTime(a.lastActivityTimestamp));
+          const dateA = convertFireBaseTimeToJsTime(arrOfPartners[0].lastActivityTimestamp);
+          const dateB = convertFireBaseTimeToJsTime(arrOfPartners[1].lastActivityTimestamp);
+          
+          const profileComponent = arrOfPartners.map((element) => {
+            return <UserProfile key={element.userId} user={{userName: element.userName,
+            emailId: element.emailId, profileLoc: element.profileLoc, 
+            userId: element.userId}}/>
+          });
+
+          setProfiles(profileComponent);
+        }
+      })
+
+      return () => unsubscribe();
     }
-    addAllProfiles();
-  }, [refresh])
+    addProfilesFromFS();
+  }, [])
 
   return (
     <div className='sideBar'>

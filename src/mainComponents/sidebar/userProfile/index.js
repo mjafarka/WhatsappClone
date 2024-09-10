@@ -5,12 +5,14 @@ import { addToLocalPersons } from '../../../localDB/localDB';
 import {useSelector, useDispatch} from 'react-redux'
 import { toggleRefresh } from '../../../redux/sideBar/searchSlice';
 import {selectProfile} from '../../../redux/sideBar/userSelectSlice'
+import { useUser } from '../../../context/UserContext';
+import { updateTimeStampOfSelectedUsr } from '../../../firebase/firebaseDB';
 
 function UserProfile(props) {
   const { user, showAdd} = props;
   user.profileLoc = profilePic;
   const dispatch = useDispatch();
-  const userId = useSelector(state => state.userSelect.userId);
+  const mainUserInf = useUser();
 
   const addUserToChat = () => {
     addToLocalPersons(user);
@@ -19,6 +21,7 @@ function UserProfile(props) {
 
   const startChattingWithPerson = () => {
     dispatch(selectProfile({userId: user.userId}));
+    updateTimeStampOfSelectedUsr(mainUserInf.userId,user.userId);
   }
 
   return (

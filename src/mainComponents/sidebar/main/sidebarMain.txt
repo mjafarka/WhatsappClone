@@ -1,0 +1,40 @@
+connect directly to firestore without local db.
+-----------------------------------------------
+
+collection = c
+docs = d
+ 
+{
+  "userId": {
+    "chatPartners": [
+      {
+        "userId": "string",
+        "userName": "string",
+        "lastActivityTimestamp": "timestamp",
+        "conversationId": "string"
+        "emailId": "string"
+        "profileLoc": "string"
+      }
+    ]
+  }
+}
+
+It uses the user's ID as the document ID in the "recentHistory"
+
+The "chatPartners" field is an array of objects 
+
+
+1. when you start
+    sideBar
+
+        * use onsnapshot
+        get all userId from the recentchat based on timestamp.
+        get all the user data from user then show it in the sidebar
+    
+    show the first person chat using the conversationId in the recentchat
+
+2. when click on one person 
+    sidebar
+        * change the server time stamp in the recentchat
+
+    

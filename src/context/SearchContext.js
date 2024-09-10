@@ -1,7 +1,8 @@
 import { createContext, useContext, useReducer, useState } from "react";
 import { searchByNameLocal } from "../localDB/localDB";
 import { searchUserSubString } from "../firebase/fireBaseApi";
-
+import { getRecentChatUsers } from "../firebase/helpers";
+import { searchUserSubStringDB } from "../firebase/firebaseDB";
 
 const SearchResultContext = createContext(null);
 
@@ -40,18 +41,33 @@ export function useSearchMethodDispatcherContext() {
     return useContext(SearchMethodDispachContext);
 }
 
+const setOfExcludedUserIds = new Set();
+
 // searcheResult : already searched result
 async function searchMethodReducer(searchResult, action) { //action: {type: "recent", subName: "muh"}
     switch (action.type) {
         case "recent": {
-            const profiles = searchByNameLocal(action.subName)
-            return profiles;
+            // const profiles = searchByNameLocal(action.subName)
+            const recentChatUsers = await getRecentChatUsers(action.recentHistoryDoc,
+                                                            action.subName);
+            return recentChatUsers;
         }
         case "new": {
             //db search
-            console.log("come in the reducer function", action.subName)
-            const profiles = await searchUserSubString(action.subName);
-            console.log("profiles returned", profiles);
+            // console.log("come in the reducer function", action.subName)
+            // const profiles = await searchUserSubString(action.subName);
+            // console.log("profiles returned", profiles);
+
+            const recentChatUsers = await getRecentChatUsers(action.recentHistoryDoc,
+                                                            action.subName);
+            recentChatUsers.forEach((person) => {
+                setOfExcludedUserIds.add(person.userId);
+            })
+            setOfExcludedUserIds.add(action.currUserId);
+
+            const searchResultOnline = await searchUserSubStringDB(action.subName);
+
+            const profiles = searchResultOnline.filter((person) => !setOfExcludedUserIds.has(person.userId));
             return profiles
         }
         default: {

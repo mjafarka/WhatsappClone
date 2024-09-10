@@ -1,8 +1,9 @@
 // all the db related functions
 
-import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
 import { db } from "./firebase";
 import { generateSearchableTerms } from "./helpers";
+import firebase from "firebase/compat/app";
 
 
 const userCollection = collection(db,'user');
@@ -152,6 +153,55 @@ export const convertFireBaseTimeToJsTime = (data) => {
     const secToMilliSec = seconds*1000;
     const date = new Date(nanoToMilliSec+secToMilliSec);
     return date;
+}
+
+export const getChatHistoryDoc = async (userId) => {
+    try {
+        // const userRecentHistoryDoc = await collection(db,'recentHistory').doc(userId).get();
+
+        const userChatHistoryDoc = doc(db,'recentHistory',userId);
+        return userChatHistoryDoc;
+        // const userChatHistorySnap = await getDoc(userChatHistoryDoc);
+        // if (userChatHistorySnap.exists()) {
+        //     const userRecentHistory = userChatHistorySnap.data();
+        //     return userRecentHistory.chatPartners;
+        // } 
+
+        // console.log("some error in retrieving user history");
+        // return null;
+    } catch (err){
+        throw new Error("error while getting user Recent history doc", err.message);
+    }
+    
+}
+
+
+/**
+ * 
+ * @param {String} currUserId 
+ * @param {String} selectedUserId 
+ * @returns {undefined} 
+ */
+export const updateTimeStampOfSelectedUsr = async (currUserId, selectedUserId) => {
+    try{
+        const userChatHistory = await getChatHistoryDoc(currUserId);
+        const doc = await getDoc(userChatHistory);
+        if (doc.exists) {
+            const chatPartnerArr = doc.data().chatPartners;
+
+            const index = chatPartnerArr.findIndex(partner => partner.userId === selectedUserId);
+
+            if (index != -1){
+                chatPartnerArr[index].lastActivityTimestamp = Timestamp.fromDate(new Date());
+            }
+            
+            console.log("server time stamp ",serverTimestamp());    
+            updateDoc(userChatHistory, {chatPartners : chatPartnerArr});
+        }
+
+    } catch (err) {
+        throw new Error ("error in updating firestore time",err.message);
+    }
 }
 
 export {createUserDoc, getUserDoc, searchUserSubStringDB};
