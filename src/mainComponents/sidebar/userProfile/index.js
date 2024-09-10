@@ -6,29 +6,34 @@ import {useSelector, useDispatch} from 'react-redux'
 import { toggleRefresh } from '../../../redux/sideBar/searchSlice';
 import {selectProfile} from '../../../redux/sideBar/userSelectSlice'
 import { useUser } from '../../../context/UserContext';
-import { updateTimeStampOfSelectedUsr } from '../../../firebase/firebaseDB';
+import { addToRecentChat, updateTimeStampOfSelectedUsr } from '../../../firebase/firebaseDB';
 
 function UserProfile(props) {
   const { user, showAdd} = props;
   user.profileLoc = profilePic;
   const dispatch = useDispatch();
   const mainUserInf = useUser();
+  const searchMethod = useSelector(state => state.search.searchMethod);
 
   const addUserToChat = () => {
     addToLocalPersons(user);
     dispatch(toggleRefresh())
   }
 
-  const startChattingWithPerson = () => {
+  const startChattingWithPerson = async () => {
+    if (searchMethod === 'new') {
+      await addToRecentChat(mainUserInf.userId,user);
+    } else {
+      await updateTimeStampOfSelectedUsr(mainUserInf.userId,user.userId);
+    } 
     dispatch(selectProfile({userId: user.userId}));
-    updateTimeStampOfSelectedUsr(mainUserInf.userId,user.userId);
   }
 
   return (
-    <div className='userProfile' onClick={!showAdd ? startChattingWithPerson : undefined}>
+    <div className='userProfile' onClick={() => startChattingWithPerson()}>
       <img src={user.profileLoc} alt='user_photo' className='profilePic' />
       <h3 className='personName'>{user.userName}</h3>
-      {showAdd ? <button className='addButton' onClick={() => addUserToChat()}>add</button> : ""}
+      {/* {showAdd ? <button className='addButton' onClick={() => addUserToChat()}>add</button> : ""} */}
     </div>
   )
 }
