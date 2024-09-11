@@ -10,6 +10,7 @@ const userCollection = collection(db,'user');
 const userIdSearchTerms = collection(db,'userSearchTerms');
 const conversationIdTerms = collection(db,'conversationIdTerms');
 const messageRoomCollection = collection(db, 'messageRoom');
+const recentHistoryCollection = collection(db,'recentHistory');
 
 //userDoc reference
 const userDocRef = (userId) => {
@@ -22,6 +23,10 @@ const searchDocRef = (userId) => {
 
 const conversationDocRef = (conversationId) => {
     return doc(messageRoomCollection,conversationId);
+}
+
+const recentHistoryDocRef = (userId) => {
+    return doc(recentHistoryCollection,userId);
 }
 
 // this will also create searchable terms {userId: ['ab','cd']}
@@ -74,8 +79,15 @@ export const sendMessage = async (userAId, userBId, message) => {
             time: serverTimestamp()
         }
         let messageRef = collection(conversationDocRef(conversationId), 'messages');
-
         const response = await addDoc(messageRef, messageData);
+        // userb  recent chat add user a or update userB timestamp for userA
+        {
+            const userADoc = await getDoc(userDocRef(userAId));
+            if (userADoc.exists()) {
+                const senderDetails = {userId: userAId, ...userADoc.data()};
+                addPesonOrUpdateTime(userBId,senderDetails)
+            }
+        }
         console.log("message send success", response);
     } catch (err) {
         throw new Error("error in sending message", err);
@@ -175,28 +187,42 @@ export const getChatHistoryDoc = async (userId) => {
     
 }
 
+const createChatHistory = async (userId) => {
+    try {
+        await setDoc(recentHistoryDocRef(userId), {chatPartners: []})
+    } catch (err) {
+        throw new Error("error while creating chatHistory",err.message);
+    }
+}
+
 
 /**
  * 
- * @param {String} currUserId 
- * @param {String} selectedUserId 
+ * @param {String} userDocId (userid) 
+ * @param {Object} partnerUser
  * @returns {undefined} 
  */
-export const updateTimeStampOfSelectedUsr = async (currUserId, selectedUserId) => {
+export const addPesonOrUpdateTime = async (userDocId, partnerUser) => {
     try{
-        const userChatHistory = await getChatHistoryDoc(currUserId);
+        const userChatHistory = await getChatHistoryDoc(userDocId);
         const doc = await getDoc(userChatHistory);
-        if (doc.exists) {
+        if (doc.exists()) {
             const chatPartnerArr = doc.data().chatPartners;
 
-            const index = chatPartnerArr.findIndex(partner => partner.userId === selectedUserId);
+            const index = chatPartnerArr.findIndex(partner => partner.userId === partnerUser.userId);
 
             if (index != -1){
                 chatPartnerArr[index].lastActivityTimestamp = Timestamp.fromDate(new Date());
+            } else {
+                const conversationId = await getConversationId(userDocId,partnerUser.userId);
+                const time = Timestamp.fromDate(new Date());
+                chatPartnerArr.push({...partnerUser, conversationId: conversationId, lastActivityTimestamp: time})
             }
-            
-            console.log("server time stamp ",serverTimestamp());    
+               
             updateDoc(userChatHistory, {chatPartners : chatPartnerArr});
+        } else {
+            await createChatHistory(userDocId);
+            await addPesonOrUpdateTime(userDocId,partnerUser);
         }
 
     } catch (err) {

@@ -23,7 +23,7 @@ export const getRecentChatUsers = async (recentHistoryRef, subName) => {
         
         let searchResult = [];
 
-        if (docRef.exists()) {
+        if (docRef.exists() && 'chatPartners' in docRef.data()) {
             searchResult =  docRef.data().chatPartners.filter(partner => {
                 return partner.userName.toLowerCase().includes(subName)
             })

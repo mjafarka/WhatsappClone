@@ -6,7 +6,7 @@ import {useSelector, useDispatch} from 'react-redux'
 import { toggleRefresh } from '../../../redux/sideBar/searchSlice';
 import {selectProfile} from '../../../redux/sideBar/userSelectSlice'
 import { useUser } from '../../../context/UserContext';
-import { addToRecentChat, updateTimeStampOfSelectedUsr } from '../../../firebase/firebaseDB';
+import { addToRecentChat, addPesonOrUpdateTime } from '../../../firebase/firebaseDB';
 
 function UserProfile(props) {
   const { user, showAdd} = props;
@@ -21,11 +21,9 @@ function UserProfile(props) {
   }
 
   const startChattingWithPerson = async () => {
-    if (searchMethod === 'new') {
-      await addToRecentChat(mainUserInf.userId,user);
-    } else {
-      await updateTimeStampOfSelectedUsr(mainUserInf.userId,user.userId);
-    } 
+    
+    await addPesonOrUpdateTime(mainUserInf.userId,user);
+    
     dispatch(selectProfile({userId: user.userId}));
   }
 
