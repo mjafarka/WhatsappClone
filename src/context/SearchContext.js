@@ -58,11 +58,11 @@ async function searchMethodReducer(searchResult, action) { //action: {type: "rec
             // const profiles = await searchUserSubString(action.subName);
             // console.log("profiles returned", profiles);
 
-            const recentChatUsers = await getRecentChatUsers(action.recentHistoryDoc,
-                                                            action.subName);
-            recentChatUsers.forEach((person) => {
-                setOfExcludedUserIds.add(person.userId);
-            })
+            // const recentChatUsers = await getRecentChatUsers(action.recentHistoryDoc,
+            //                                                 action.subName);
+            // recentChatUsers.forEach((person) => {
+            //     setOfExcludedUserIds.add(person.userId);
+            // })
             setOfExcludedUserIds.add(action.currUserId);
 
             const searchResultOnline = await searchUserSubStringDB(action.subName);

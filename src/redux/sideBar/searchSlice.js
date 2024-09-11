@@ -9,7 +9,6 @@ const searchSlice = createSlice({
             state.refreshBool = !state.refreshBool;
         },
         toggleSearchMethod(state,action) {
-            const a = 'b';
             switch(action.payload.searchMethod) {
                 case 'recent':
                     state.searchMethod = 'recent';
@@ -17,6 +16,12 @@ const searchSlice = createSlice({
                 case 'new':
                     state.searchMethod = 'new';
                     break;
+            }
+        },
+        toggleSearchResultView(state,action){
+            switch (action.payload.showResult) {
+                case true:
+                    
             }
         }
     }

@@ -23,11 +23,10 @@ function Search() {
   },[subName])
 
   async function searchPeople () {
-    dispatch(toggleSearchMethod({searchMethod: 'recent'}));
-    const recentHistoryRef = await getChatHistoryDoc(user.userId);
-    searchTrigger({type: 'recent', subName: subNameSearch, recentHistoryDoc:
-    recentHistoryRef});
-    setSubNameInContext(subNameSearch);
+    // dispatch(toggleSearchMethod({searchMethod: 'recent'}));
+    // const recentHistoryRef = await getChatHistoryDoc(user.userId);
+    searchTrigger({type: 'new', subName: subNameSearch});
+    // setSubNameInContext(subNameSearch);
     setShowSearchResult(true);
   }
 

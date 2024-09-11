@@ -21,17 +21,14 @@ function SideBar() {
     const addProfilesFromFS = async () =>{
       const chatHistoryDoc = await getChatHistoryDoc(user.userId);
       const unsubscribe = onSnapshot(chatHistoryDoc, (doc) => {
-        const data = doc.data();
 
-        if (data && data.chatPartners) {
-
+        if (doc.exists() && 'chatPartners' in doc.data()) {
+          const data = doc.data();
           const arrOfPartners = data.chatPartners;
 
           arrOfPartners.sort((a,b) => convertFireBaseTimeToJsTime(b.lastActivityTimestamp) 
                                     - convertFireBaseTimeToJsTime(a.lastActivityTimestamp));
-          const dateA = convertFireBaseTimeToJsTime(arrOfPartners[0].lastActivityTimestamp);
-          const dateB = convertFireBaseTimeToJsTime(arrOfPartners[1].lastActivityTimestamp);
-          
+
           const profileComponent = arrOfPartners.map((element) => {
             return <UserProfile key={element.userId} user={{userName: element.userName,
             emailId: element.emailId, profileLoc: element.profileLoc, 

@@ -25,26 +25,26 @@ const SearchResult =  () => {
     fetchData();
   },[result]);
 
-  const dbSearchTrigger = useSearchMethodDispatcherContext();
+  // const dbSearchTrigger = useSearchMethodDispatcherContext();
   const searchResultArray = []
-  const {subName, setSubNameInContext} = useContext(subNameContext);
+  // const {subName, setSubNameInContext} = useContext(subNameContext);
   for (const user of searchResult) {
   // need to remove it and add user when search button is clicked
       searchResultArray.push(<UserProfile user={user} key={user.userId} showAdd={true}/>)
   }
 
   const user = useUser();
-  const searchPeopleOnline = async () => {
-    dispatch(toggleSearchMethod({searchMethod: 'new'}));
-    const recentHistoryRef = await getChatHistoryDoc(user.userId);
-    // const recentChatUsers = await getRecentChatUsers(recentHistoryRef,subName);
-    // setSearchResult(recentChatUsers);
-    searchTrigger({type: 'new', subName: subName, 
-                  recentHistoryDoc: recentHistoryRef, currUserId: user.userId})
-  }
+  // const searchPeopleOnline = async () => {
+  //   dispatch(toggleSearchMethod({searchMethod: 'new'}));
+  //   const recentHistoryRef = await getChatHistoryDoc(user.userId);
+  //   // const recentChatUsers = await getRecentChatUsers(recentHistoryRef,subName);
+  //   // setSearchResult(recentChatUsers);
+  //   searchTrigger({type: 'new', subName: subName, 
+  //                 recentHistoryDoc: recentHistoryRef, currUserId: user.userId})
+  // }
 
   const exitSearchAction = () => {
-    setSubNameInContext("");
+    // setSubNameInContext("");
     setSearchResult([]);
     setShowSearchResult(false);
     dispatch(toggleSearchMethod({searchMethod: 'recent'}));
@@ -54,9 +54,9 @@ const SearchResult =  () => {
     <div style={{display: showSearchResult ? 'block' : 'none'}}>
     <div className={searchResultArray.length > 3 ? "searchResult" : "searchResultNoScroll"}>
         {searchResultArray}
-        <div className='searchMore' onClick={() => searchPeopleOnline()}>
+        {/* <div className='searchMore' onClick={() => searchPeopleOnline()}>
           New connections
-        </div>
+        </div> */}
         <button onClick={() => exitSearchAction()}>back</button>
     </div>
     </div>
