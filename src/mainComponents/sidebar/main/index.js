@@ -9,6 +9,7 @@ import {useSelector, useDispatch} from 'react-redux'
 import { convertFireBaseTimeToJsTime, getChatHistoryDoc } from '../../../firebase/firebaseDB';
 import { useUser } from '../../../context/UserContext';
 import { onSnapshot } from 'firebase/firestore';
+import Menu from '../menu';
 
 function SideBar() {
 
@@ -46,6 +47,7 @@ function SideBar() {
 
   return (
     <div className='sideBar'>
+      <Menu className='menu'/>
       <SearchProvider> {/* to search local and db profiles */}
         <Search />
         <SearchResult />
