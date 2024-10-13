@@ -10,6 +10,7 @@ import { convertFireBaseTimeToJsTime, getChatHistoryDoc } from '../../../firebas
 import { useUser } from '../../../context/UserContext';
 import { onSnapshot } from 'firebase/firestore';
 import Menu from '../menu';
+import MyProfile from '../myProfile';
 
 function SideBar() {
 
@@ -46,13 +47,16 @@ function SideBar() {
   }, [])
 
   return (
-    <div className='sideBar'>
-      <Menu className='menu'/>
-      <SearchProvider> {/* to search local and db profiles */}
-        <Search />
-        <SearchResult />
-      </SearchProvider>
-      {profiles}
+    <div className='sideBar flex flex-row'>
+      <Menu className='menu w-5'/>
+      <div className='flex flex-col w-full'>
+        <SearchProvider> 
+            <Search />
+            <SearchResult />
+        </SearchProvider>
+        {profiles}
+        {/* <MyProfile/> */}
+      </div>
     </div>
   )
 }

@@ -33,7 +33,7 @@ function Search() {
   return (
     <>
       <div className='searchContainer'>
-        <input type='text' placeholder='Search...' className='input-search' value={subNameSearch}
+        <input type='text' placeholder='Search...' className='input-search w-full' value={subNameSearch}
         onChange={e => setSubNameSearch(e.target.value)}/>
         <span className='search-icon'>
           <CiSearch onClick={() => searchPeople()}/>
